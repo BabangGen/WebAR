@@ -1,7 +1,9 @@
 from flask import Flask, request, jsonify, send_file, render_template_string
+from sqlalchemy import create_engine
 import pandas as pd
 from datetime import datetime
 import os
+engine = create_engine("sqlite+pysqlite:///:memory:", echo=True)
 
 app = Flask(__name__)
 
@@ -136,7 +138,7 @@ def submit_score():
     try:
         data = request.json
         if not all(key in data for key in ['player_name', 'score']):
-            return jsonify({'error': 'Missing required fields'}), 400
+            return jsonify({'error': 'Missing required fields'}), 200
         
         score_entry = {
             'player_name': data['player_name'],
@@ -148,7 +150,7 @@ def submit_score():
         return jsonify({'message': 'Score submitted successfully'}), 200
     
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        return jsonify({'error': str(e)}), 200
 
 @app.route('/get-scores', methods=['GET'])
 def get_scores():
